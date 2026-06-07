@@ -1,6 +1,6 @@
 file_format: "1"
-id: soflecirque
-name: Soflecirque
+id: sofle
+name: Sofle
 type: shield
 url: https://github.com/sjamorales1-ops/zmk-soflecirque
 requires: 
