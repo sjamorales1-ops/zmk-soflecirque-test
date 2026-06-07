@@ -1,0 +1,33 @@
+manifest:
+  remotes:
+    - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+    - name: petejohanson
+      url-base: https://github.com/petejohanson/
+    - name: mctechnology17
+      url-base: https://github.com/mctechnology17
+    - name: urob
+      url-base: https://github.com/urob
+    - name: petejohanson
+      url-base: https://github.com/petejohanson/
+    - name: geeksville
+      url-base: https://github.com/geeksville
+
+
+    # Additional modules containing boards/shields/custom code can be listed here as well
+  projects:
+    - name: zmk
+      remote: zmkfirmware
+      revision: v0.3
+      import: app/west.yml
+    #- name: cirque-input-module
+    #  remote: petejohanson
+    #  revision: main
+    - name: zmk-nice-oled
+      remote: mctechnology17
+      revision: main
+    - name: cirque-input-module
+      remote: geeksville
+      revision: main
+  self:
+    path: config

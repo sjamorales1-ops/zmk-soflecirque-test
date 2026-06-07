@@ -1,0 +1,16 @@
+file_format: "1"
+id: soflecirque
+name: Soflecirque
+type: shield
+url: https://github.com/sjamorales1-ops/zmk-soflecirque
+requires: 
+  - nice_nano_v2
+  - cirque pinnacle trackpad
+features:
+  - keys
+  - display
+  - pointer
+  - studio
+siblings:
+  - soflecirque_left
+  - soflecirque_right

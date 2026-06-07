@@ -1,0 +1,384 @@
+/*
+ * Copyright (c) 2020 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <input/processors.dtsi>
+
+/*
+ * Temporarily here because nice nano v2 spi is not defined on ZMK Yet
+ * Source: https://github.com/zmkfirmware/zmk/blob/main/app/boards/shields/reviung41/boards/nice_nano.overlay
+ * GitHub Issue: https://github.com/zmkfirmware/zmk/issues/885
+ */
+
+#define ZMK_POINTING_DEFAULT_MOVE_VAL 1200  // default: 600
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 30   // default: 10
+
+#include <dt-bindings/led/led.h>
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/outputs.h>
+#include <dt-bindings/zmk/pointing.h>
+#include <dt-bindings/zmk/rgb.h>
+
+&pinctrl {
+    spi3_default: spi3_default {
+        group1 { psels = <NRF_PSEL(SPIM_MOSI, 0, 8)>; };
+    };
+
+    spi3_sleep: spi3_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_MOSI, 0, 8)>;
+            low-power-enable;
+        };
+    };
+};
+
+&spi3 {
+    compatible = "nordic,nrf-spim";
+    status = "okay";
+    pinctrl-0 = <&spi3_default>;
+    pinctrl-1 = <&spi3_sleep>;
+    pinctrl-names = "default", "sleep";
+
+    led_strip: ws2812@0 {
+        compatible = "worldsemi,ws2812-spi";
+        label = "WS2812";
+
+        /* SPI */
+
+        reg = <0>; /* ignored, but necessary for SPI bindings */
+        spi-max-frequency = <4000000>;
+
+        /* WS2812 */
+
+        chain-length = <30>;
+        spi-one-frame = <0x70>;
+        spi-zero-frame = <0x40>;
+        color-mapping = <LED_COLOR_ID_GREEN LED_COLOR_ID_RED LED_COLOR_ID_BLUE>;
+    };
+};
+
+&mt {
+    tapping-term-ms = <200>;
+    flavor = "balanced";
+};
+
+&lt {
+    tapping-term-ms = <250>;
+    flavor = "balanced";
+};
+
+/ {
+    chosen { zmk,underglow = &led_strip; };
+};
+
+/* END temporary RGB support section */
+
+/ {
+    combos {
+        compatible = "zmk,combos";
+
+        Capsv1 {
+            bindings = <&kp CAPSLOCK>;
+            key-positions = <36 49>;
+            layers = <0 1>;
+        };
+
+        TypingLayer {
+            bindings = <&tog 1>;
+            key-positions = <1 50>;
+            layers = <0 1>;
+        };
+    };
+
+    behaviors {
+        lowertapdance: lowertapdance {
+            compatible = "zmk,behavior-tap-dance";
+            label = "LOWERTAPDANCE";
+            #binding-cells = <0>;
+            bindings = <&mo 2>, <&to 2>;
+
+            tapping-term-ms = <250>;
+        };
+
+        CapsWord: CapsWord {
+            compatible = "zmk,behavior-hold-tap";
+            label = "CAPSWORD";
+            bindings = <&kp>, <&caps_word>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
+            flavor = "balanced";
+            quick-tap-ms = <150>;
+        };
+
+        Thumb_Layer: Thumb_Layer {
+            compatible = "zmk,behavior-hold-tap";
+            label = "THUMB_LAYER";
+            bindings = <&mo>, <&kp>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
+            quick-tap-ms = <150>;
+            flavor = "balanced";
+        };
+
+        hml_pointer: home_row_mode_left_pointer {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HML_POINTER";
+            bindings = <&kp>, <&kp>;
+
+            #binding-cells = <2>;
+            hold-trigger-key-positions = <6 7 9 8 10 11 18 19 20 21 22 23 30 31 32 33 34 44 45 46 47 48 35>;
+            quick-tap-ms = <150>;
+            require-prior-idle-ms = <150>;
+            tapping-term-ms = <190>;
+            flavor = "balanced";
+            hold-trigger-on-release;
+        };
+
+        hmr_pointer: home_row_mod_right_pointer {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HMR_POINTER";
+            bindings = <&kp>, <&kp>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <190>;
+            quick-tap-ms = <150>;
+            require-prior-idle-ms = <150>;
+            flavor = "balanced";
+            hold-trigger-key-positions = <1 2 3 4 5 17 16 15 14 13 25 26 27 28 29 37 38 39 40 41 0>;
+            hold-trigger-on-release;
+        };
+
+        hml_pinky: home_row_mode_left_pinky {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HML_PINKY";
+            bindings = <&kp>, <&kp>;
+
+            #binding-cells = <2>;
+            hold-trigger-key-positions = <6 7 9 8 10 11 18 19 20 21 22 23 30 31 32 33 34 44 45 46 47 48 35>;
+            quick-tap-ms = <150>;
+            require-prior-idle-ms = <150>;
+            tapping-term-ms = <250>;
+            flavor = "balanced";
+            hold-trigger-on-release;
+        };
+
+        hml_ring: home_row_mode_left_ring {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HML_RING";
+            bindings = <&kp>, <&kp>;
+
+            #binding-cells = <2>;
+            hold-trigger-key-positions = <6 7 9 8 10 11 18 19 20 21 22 23 30 31 32 33 34 44 45 46 47 48 35>;
+            quick-tap-ms = <150>;
+            require-prior-idle-ms = <150>;
+            tapping-term-ms = <250>;
+            flavor = "balanced";
+            hold-trigger-on-release;
+        };
+
+        hml_middle: home_row_mode_left_middle {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HML_MIDDLE";
+            bindings = <&kp>, <&kp>;
+
+            #binding-cells = <2>;
+            hold-trigger-key-positions = <6 7 9 8 10 11 18 19 20 21 22 23 30 31 32 33 34 44 45 46 47 48 35>;
+            quick-tap-ms = <150>;
+            require-prior-idle-ms = <150>;
+            tapping-term-ms = <220>;
+            flavor = "balanced";
+            hold-trigger-on-release;
+        };
+
+        hmr_middle: home_row_mod_right_middle {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HMR_MIDDLE";
+            bindings = <&kp>, <&kp>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <220>;
+            quick-tap-ms = <150>;
+            require-prior-idle-ms = <150>;
+            flavor = "balanced";
+            hold-trigger-key-positions = <1 2 3 4 5 17 16 15 14 13 25 26 27 28 29 37 38 39 40 41 0>;
+            hold-trigger-on-release;
+        };
+
+        hmr_ring: home_row_mod_right_ring {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HMR_RING";
+            bindings = <&kp>, <&kp>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <250>;
+            quick-tap-ms = <150>;
+            require-prior-idle-ms = <150>;
+            flavor = "balanced";
+            hold-trigger-key-positions = <1 2 3 4 5 17 16 15 14 13 25 26 27 28 29 37 38 39 40 41 0>;
+            hold-trigger-on-release;
+        };
+
+        hmr_pinky: home_row_mod_right_pinky {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HMR_PINKY";
+            bindings = <&kp>, <&kp>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <250>;
+            quick-tap-ms = <150>;
+            require-prior-idle-ms = <150>;
+            flavor = "balanced";
+            hold-trigger-key-positions = <1 2 3 4 5 17 16 15 14 13 25 26 27 28 29 37 38 39 40 41 0>;
+            hold-trigger-on-release;
+        };
+    };
+
+    macros {
+        extend_line: extend_line {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp LS(END)>;
+            label = "EXTEND_LINE";
+        };
+
+        extend_word: extend_word {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp LS(LC(RIGHT))>;
+            label = "EXTEND_WORD";
+        };
+
+        select_line: select_line {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp HOME &kp LS(END)>;
+            label = "SELECT_LINE";
+        };
+
+        select_word: select_word {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp LS(LEFT) &kp LC(LS(RIGHT))>;
+            label = "SELECT_WORD";
+        };
+
+        select_none: select_none {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp DOWN &kp UP_ARROW &kp RIGHT &kp LEFT>;
+            label = "SELECT_NONE";
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        Base {
+            label = "BASE";
+
+            // ------------------------------------------------------------------------------------------------------------------
+            // |  `    |  1  |  2  |  3   |  4   |  5   |                         |  6   |  7    |  8    |  9   |   0   |       |
+            // |  ESC  |  Q  |  W  |  E   |  R   |  T   |                         |  Y   |  U    |  I    |  O   |   P   | BKSPC |
+            // |  TAB  |  A  |  S  |  D   |  F   |  G   |                         |  H   |  J    |  K    |  L   |   ;   |   '   |
+            // | SHIFT |  Z  |  X  |  C   |  V   |  B   |  MUTE  |        | ExtPw |  N   |  M    |  ,    |  .   |   /   | SHIFT |
+            //               | GUI | ALT  | CTRL | LOWER|  ENTER |        | SPACE | RAISE| CTRL  | ALT   | GUI  |
+
+            bindings = <
+&kp EQUAL               &kp N1                 &kp N2                &kp N3               &kp N4                &kp N5                                                        &kp N6     &kp N7                &kp N8               &mt LEFT_BRACKET N9    &mt RIGHT_BRACKET N0  &kp MINUS
+&kp TAB                 &kp Q                  &kp W                 &kp F                &kp P                 &kp B                                                         &kp J      &kp L                 &kp U                &kp Y                  &kp SEMICOLON         &kp NON_US_BACKSLASH
+&kp ESCAPE              &hml_pinky LEFT_GUI A  &hml_ring LEFT_ALT R  &hml_middle LCTRL S  &hml_pointer LSHFT T  &kp G                                                         &kp M      &hmr_pointer RSHFT N  &hmr_middle RCTRL E  &hmr_ring RIGHT_ALT I  &hmr_pinky RGUI O     &kp SQT
+&CapsWord LEFT_SHIFT 0  &kp Z                  &kp X                 &kp C                &kp D                 &kp V          &lowertapdance           &mo 5                 &kp K      &kp H                 &kp COMMA            &kp DOT                &kp FSLH              &CapsWord RIGHT_SHIFT 0
+                                               &kp LGUI              &kp LALT             &lt 6 LCTRL           &kp BACKSPACE  &Thumb_Layer 2 DELETE    &Thumb_Layer 3 ENTER  &kp SPACE  &lt 4 RCTRL           &kp RALT             &kp RGUI
+            >;
+        };
+
+        Typing {
+            label = "TYPE";
+            bindings = <
+&kp EQUAL  &kp N1  &kp N2  &kp N3  &kp N4  &kp N5                                     &kp N6  &kp N7  &kp N8     &kp N9   &kp N0         &kp MINUS
+&trans     &kp Q   &kp W   &kp F   &kp P   &kp B                                      &kp J   &kp L   &kp U      &kp Y    &kp SEMICOLON  &kp NON_US_BACKSLASH
+&trans     &kp A   &kp R   &kp S   &kp T   &kp G                                      &kp M   &kp N   &kp E      &kp I    &kp O          &kp SQT
+&trans     &kp Z   &kp X   &kp C   &kp D   &kp V   &kp LEFT_SHIFT    &kp RIGHT_SHIFT  &kp K   &kp H   &kp COMMA  &kp DOT  &kp FSLH       &trans
+                   &trans  &trans  &trans  &trans  &trans            &trans           &trans  &trans  &trans     &trans
+            >;
+        };
+
+        Lower {
+            label = "LOWER";
+
+            // TODO: Some binds are waiting for shifted keycode support.
+            // ------------------------------------------------------------------------------------------------------------
+            // |       |  F1 |  F2 |  F3  |  F4  |  F5  |                   |  F6  |  F7   |  F8   |  F9  |  F10  |  F11  |
+            // | `     |   1 |   2 |   3  |   4  |   5  |                   |   6  |   7   |   8   |   9  |    0  |  F12  |
+            // |       |  !  |  @  |  #   |  $   |  %   |                   |  ^   |  &    |  *    |  (   |   )   |   |   |
+            // |       |  =  |  -  |  +   |  {   |  }   |        |  |       |  [   |  ]    |  ;    |  :   |   \   |       |
+            //               |     |      |      |      |        |  |       |      |       |       |      |
+
+            bindings = <
+&trans  &kp C_PREV  &kp C_NEXT      &kp C_PLAY_PAUSE  &kp C_VOLUME_DOWN  &kp C_VOLUME_UP                         &kp LEFT_PARENTHESIS   &kp KP_NUMLOCK   &kp KP_EQUAL     &kp KP_DIVIDE  &kp KP_MULTIPLY  &kp PRINTSCREEN
+&trans  &kp HOME    &kp END         &kp PAGE_UP       &kp PAGE_DOWN      &kp LC(X)                               &kp RIGHT_PARENTHESIS  &kp KP_N7        &kp KP_N8        &kp KP_N9      &kp KP_MINUS     &kp SCROLLLOCK
+&trans  &kp LC(Y)   &none           &kp UP_ARROW      &none              &kp LC(C)                               &kp DOLLAR             &kp KP_N4        &kp KP_N5        &kp KP_N6      &kp KP_PLUS      &kp LA(LC(M))
+&trans  &kp LC(Z)   &kp LEFT_ARROW  &kp DOWN          &kp RIGHT          &kp LC(V)        &trans    &kp PERCENT  &kp COMMA              &kp KP_N1        &kp KP_N2        &kp KP_N3      &kp KP_ENTER     &trans
+                    &kp LBKT        &kp RBKT          &kp GRAVE          &trans           &trans    &trans       &trans                 &kp KP_NUMBER_0  &kp KP_NUMBER_0  &kp KP_DOT
+            >;
+        };
+
+        FNCursor {
+            label = "FN-CUR";
+            bindings = <
+&kp LS(TAB)  &kp C_BRIGHTNESS_DEC  &kp C_BRIGHTNESS_INC  &kp INS           &kp LG(D)       &kp LA(TAB)                           &kp F1        &kp F2     &kp F3        &kp F4     &kp F5     &kp F6
+&trans       &kp HOME              &kp END               &kp PG_UP         &kp PAGE_DOWN   &kp LC(X)                             &kp F7        &kp F8     &kp F9        &kp F10    &kp F11    &kp F12
+&trans       &kp LEFT_WIN          &kp LEFT_ALT          &kp LEFT_CONTROL  &kp LEFT_SHIFT  &kp LC(C)                             &select_word  &none      &kp UP_ARROW  &none      &kp LC(F)  &none
+&trans       &kp LC(Z)             &kp LC(Y)             &kp LC(LS(G))     &kp LC(G)       &kp LC(V)     &kp BACKSPACE    &none  &select_line  &kp LEFT   &kp DOWN      &kp RIGHT  &kp LC(H)  &trans
+                                   &trans                &select_none      &kp LC(A)       &extend_word  &extend_line     &none  &kp RC(L)     &kp RC(K)  &none         &none
+            >;
+        };
+
+        Mouse {
+            label = "MOUSE";
+            bindings = <
+&none   &none           &none           &none           &none            &none                               &none           &none           &none           &none            &none      &none
+&trans  &none           &msc SCRL_LEFT  &mmv MOVE_UP    &msc SCRL_RIGHT  &msc SCRL_UP                        &none           &kp RSHFT       &kp RCTRL       &kp RALT         &kp RGUI   &none
+&trans  &msc SCRL_UP    &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &msc SCRL_DOWN                      &msc SCRL_UP    &msc SCRL_LEFT  &mmv MOVE_UP    &msc SCRL_RIGHT  &mkp LCLK  &none
+&trans  &msc SCRL_DOWN  &kp LC(X)       &kp LC(C)       &kp LC(V)        &none           &mkp MB4     &none  &msc SCRL_DOWN  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &mkp RCLK  &trans
+                        &none           &mkp MB5        &mkp MB3         &mkp LCLK       &mkp RCLK    &none  &none           &none           &none           &none
+            >;
+        };
+
+        Symbol {
+            label = "SYMBOL";
+            bindings = <
+&kp GRAVE        &kp LESS_THAN   &kp LEFT_PARENTHESIS  &kp RIGHT_PARENTHESIS  &kp SEMICOLON     &kp PERIOD                            &none              &none            &none              &none      &none      &none
+&kp EXCLAMATION  &kp LEFT_BRACE  &kp LEFT_BRACKET      &kp RIGHT_BRACKET      &kp RIGHT_BRACE   &kp QUESTION                          &kp GRAVE          &kp DELETE       &kp LS(TAB)        &kp INS    &kp ESC    &none
+&kp HASH         &kp CARET       &kp EQUAL             &kp UNDER              &kp DOLLAR        &kp ASTERISK                          &kp DOUBLE_QUOTES  &kp BACKSPACE    &kp TAB            &kp SPACE  &kp ENTER  &none
+&kp TILDE        &kp LESS_THAN   &kp PIPE              &kp MINUS              &kp GREATER_THAN  &kp SLASH     &kp PERCENT      &none  &kp SQT            &sk RIGHT_SHIFT  &sk RIGHT_CONTROL  &sk RALT   &sk RWIN   &none
+                                 &kp BACKSLASH         &kp COLON              &kp PLUS          &kp AT        &kp AMPERSAND    &none  &none              &none            &none              &none
+            >;
+        };
+
+        Raise {
+            label = "RAISE";
+
+            // ------------------------------------------------------------------------------------------------------------
+            // |BTCLR| BT1  | BT2  |  BT3  |  BT4  |  BT5 |                 |      |      |       |      |       |       |
+            // |     | INS  | PSCR | GUI   |       |      |                 | PGUP |      |   ^   |      |       |       |
+            // |     | ALT  | CTRL | SHIFT |       | CAPS |                 | PGDN |   <- |   v   |  ->  |  DEL  | BKSPC |
+            // |     | UNDO | CUT  | COPY  | PASTE |      |      |   | RGB  |      |      |       |      |       |       |
+            //              |      |       |       |      |      |   |      |      |      |       |      |
+
+            bindings = <
+&bt BT_CLR   &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                                       &none  &none  &none  &none  &none  &studio_unlock
+&sys_reset   &rgb_ug RGB_HUI  &rgb_ug RGB_SAI  &rgb_ug RGB_BRI  &rgb_ug RGB_SPI  &rgb_ug RGB_TOG                                    &none  &none  &none  &none  &none  &sys_reset
+&bootloader  &rgb_ug RGB_HUD  &rgb_ug RGB_SAD  &rgb_ug RGB_BRD  &rgb_ug RGB_SPD  &rgb_ug RGB_EFF                                    &none  &none  &none  &none  &none  &bootloader
+&none        &none            &none            &none            &none            &rgb_ug RGB_COLOR_HSB(172,100,50)  &none    &none  &none  &none  &none  &none  &none  &out OUT_TOG
+                              &none            &none            &none            &none                              &none    &none  &none  &none  &none  &none
+            >;
+        };
+    };
+};
