@@ -47,11 +47,6 @@ RC(3,0) RC(3,1) RC(3,2) RC(3,3) RC(3,4) RC(3,5) RC(4,5) RC(4,6) RC(3,6) RC(3,7) 
 };
 
 / {
-    glidepoint_listener: glidepoint_listener {
-        compatible = "zmk,input-listener";
-        status = "disabled";
-    };
-
     split_inputs {
         #address-cells = <1>;
         #size-cells = <0>;
@@ -62,9 +57,19 @@ RC(3,0) RC(3,1) RC(3,2) RC(3,3) RC(3,4) RC(3,5) RC(4,5) RC(4,6) RC(3,6) RC(3,7) 
         };
     };
 
-    glidepoint_split_listener: glidepoint_split_listener {
+
+    glidepoint_listener: glidepoint_listener {
         compatible = "zmk,input-listener";
         status = "disabled";
         device = <&glidepoint_split>;
+        input-processors = <&zip_xy_scaler 250 100>;
+        scroller {
+            layers = <1 2>;
+            input-processors = <
+                &zip_xy_to_scroll_mapper
+                &zip_scroll_scaler 1 5
+                &zip_scroll_transform INPUT_TRANSFORM_Y_INVERT
+            >;
+        };
     };
 };
