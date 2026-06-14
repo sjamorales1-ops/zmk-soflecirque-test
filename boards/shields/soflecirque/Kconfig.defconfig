@@ -12,7 +12,7 @@ endif
 
 if SHIELD_SOFLECIRQUE_RIGHT || SHIELD_SOFLECIRQUE_LEFT
 
-config SPI
+config I2C
     default y
 
 config ZMK_SPLIT
