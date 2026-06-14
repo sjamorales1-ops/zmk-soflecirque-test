@@ -22,6 +22,9 @@ manifest:
       remote: zmkfirmware
       revision: v0.3
       import: app/west.yml
+    - name: zmk-nice-oled
+      remote: mctechnology17
+      revision: main
     #- name: cirque-input-module
     #  remote: petejohanson
     #  revision: main
