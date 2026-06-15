@@ -77,12 +77,16 @@
     // if you're running in relative mode and don't use no-taps, this might
     // result in duplicate taps
 
-    //tap-detection;
-    //tap-timout-ms=<120>;
+    tap-detection;
+    tap-timout-ms=<120>;
 
     inertial-cursor;
     inertial-cursor-velocity-threshold=<1>;
     inertial-cursor-decay-percent=<30>;
+
+    circular-scroll;
+    circular-scroll-rim-percent=<10>;
+
 };
 
 &pointer_accel {
@@ -109,7 +113,7 @@
             &zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
             */
             &pointer_accel
-            &zip_temp_layer 1 500
+            &zip_temp_layer 3 100
 	    	/*
             &zip_xy_scaler 2 1> // multiplier / divisor scaling
 	    	&zip_xy_transform (INPUT_TRANSFORM_XY_SWAP | INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
