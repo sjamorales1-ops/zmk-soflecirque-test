@@ -102,7 +102,7 @@
     glidepoint_listener: glidepoint_listener {
         compatible = "zmk,input-listener";
         status = "okay";
-        device = <&glidepoint0>;
+        device = <&glidepoint>;
         input-processors = <
             &zip_gestures
             &zip_absolute_to_relative
