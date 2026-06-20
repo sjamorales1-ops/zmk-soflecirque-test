@@ -2,7 +2,7 @@ file_format: "1"
 id: sofle
 name: Sofle
 type: shield
-url: https://github.com/sjamorales1-ops/zmk-soflecirque
+url: https://github.com/sjamorales1-ops/zmk-soflecirque-test
 requires: 
   - nice_nano_v2
   - cirque pinnacle trackpad
